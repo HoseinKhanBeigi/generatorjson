@@ -1,0 +1,107 @@
+.logos {
+  height: 100px;
+  display: flex;
+  justify-content: space-around;
+  direction: rtl;
+}
+
+.contract-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding: 10px 50px;
+}
+
+.logo {
+  max-height: 100%;
+}
+.title {
+  width: 100%;
+  font-size: 30px;
+  text-align: center;
+  color: black;
+  margin: 30px 0;
+}
+
+.itemText {
+  font-weight: bold;
+  font-size: 24px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.itemDescription {
+  text-align: center;
+  font-size: 11px;
+  margin-bottom: 10px;
+  margin-top: 5px;
+}
+.itemTitle {
+  font-weight: bold;
+  font-size: 15px;
+  margin-bottom: 10px;
+  margin-bottom: 5px;
+}
+.page {
+  /* height: 11.69in;
+  direction: rtl;
+  text-align: right; */
+}
+h2 {
+  margin: 25px 15px;
+}
+
+p {
+  margin: 10px 20px;
+  font-size: 18px;
+}
+.sign {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 50px;
+}
+.table {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ccc;
+}
+
+.row {
+  display: flex;
+}
+
+.cell {
+  display: flex;
+  flex: 1;
+  padding: 5px;
+  border: 1px solid #ccc;
+}
+.col span {
+  height: 30px;
+}
+
+.text {
+  text-align: start;
+}
+
+.pageContent {
+  border: 2px solid black;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 12px;
+  margin-top: 16px;
+  /* height: 1000px; */
+}
+
+.pageA4 {
+  height: 297mm;
+
+  width: 740px;
+  direction: rtl;
+  text-align: right;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  height: 3900px;
+}
