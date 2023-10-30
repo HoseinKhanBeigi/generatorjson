@@ -90,11 +90,10 @@ p {
   margin-bottom: 12px;
   margin-top: 16px;
   /* height: 1000px; */
+  height: 274mm;
 }
 
 .pageA4 {
-  height: 297mm;
-
   width: 740px;
   direction: rtl;
   text-align: right;
@@ -103,5 +102,4 @@ p {
 .container {
   display: flex;
   justify-content: center;
-  height: 3900px;
 }
