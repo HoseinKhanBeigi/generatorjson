@@ -5,6 +5,7 @@ import html2pdf from "html2pdf.js";
 import data1 from "../formDocOne.json";
 import "./schema.css";
 import Table from "./table";
+let hr = 1;
 
 function Sechma() {
   const pageRef = useRef();
@@ -38,75 +39,116 @@ function Sechma() {
   const [pageNumber, setPageNumber] = useState(1);
   const entityRef = useRef();
 
-  const convertToPdf = () => {
+  const convertToPdf = async () => {
     var opt = {
-      margin: 1,
+      margin: 0,
       filename: "myfile.pdf",
       image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2 },
+      html2canvas: { scale: 1 },
       jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
     };
 
-    html2pdf()
+    // html2pdf()
+    //   .set(opt)
+    //   .from(contentRef.current)
+    //   .save()
+    //   .outputPdf()
+    //   .then((pdf) => {
+    //     console.log(pdf);
+    //   });
+
+    let worker = await html2pdf()
       .set(opt)
       .from(contentRef.current)
-      .save()
-      .outputPdf()
-      .then((pdf) => {
-        console.log(pdf);
-      });
+      .toPdf()
+      .output("blob")
+      .then((data) => {
+        console.log(data);
+        return data;
+      })
+      .save();
+  };
 
-      let worker = await html2pdf().set(options).from(content).toPdf().output('blob').then( (data: Blob) => {
-   return data
-})
+  const [commonData, setCommonData] = useState(data1);
+
+  const popUnshift = () => {
+    const treshHold = 1050;
+    let pageHeigh = 0;
+    const arr = [];
+    let count = 0;
+    const allElementHeighs = [...contentRef.current.children[0].children]
+      .map((item) => [...item.children].map((entity) => entity.clientHeight))
+      .flat(Infinity);
+
+    const allContents = data1
+      .map((item) => item.pages[0].entities.map((entity) => entity))
+      .flat(Infinity);
+
+    console.log(allElementHeighs);
+    console.log(allContents);
+
+    for (let i = 0; i < allElementHeighs.length; i++) {
+      pageHeigh += allElementHeighs[i];
+
+      if (pageHeigh < treshHold) {
+        arr.push(allContents[i]);
+      }
+    }
+    console.log(arr);
   };
 
   return (
     <>
-      <a href={url} download={"my-pdf-document.pdf"}>
-        test
-      </a>
-      <button onClick={convertToPdf}>Convert to PDF</button>
+      <div className="btnContainer">
+        <button onClick={popUnshift}>pop-unshift</button>
+      </div>
       <div className="container" ref={contentRef}>
-        <div className="pageA4" ref={entityRef}>
-          {data1.map((e) =>
-            e.pages?.map((page, idx) => (
-              <div className="pageContent">
-                {page.entities.map((item) => {
-                  return (
-                    <div>
-                      {item.id !== "table" ? (
-                        item.bold || item.contractTitle ? (
-                          <div className="itemText">{item.text}</div>
-                        ) : item.description ? (
-                          <div className="itemDescription">{item.text}</div>
-                        ) : item.title ? (
-                          <div className="itemTitle">{item.text}</div>
+        <div className="pageA4">
+          {data1.map((e, idx) =>
+            e.pages?.map((page) => {
+              return (
+                <div
+                  className="pageContent"
+                  style={{ marginBottom: "5px", marginTop: "3px" }}
+                >
+                  {page.entities.map((item) => {
+                    return (
+                      <div>
+                        {item.id !== "table" ? (
+                          item.bold || item.contractTitle ? (
+                            <div className="itemText">{item.text}</div>
+                          ) : item.description ? (
+                            <div className="itemDescription">{item.text}</div>
+                          ) : item.title ? (
+                            <div className="itemTitle">{item.text}</div>
+                          ) : (
+                            <div className="text">
+                              {!item.regex ? (
+                                <>{item.text}</>
+                              ) : (
+                                <>{handleMoreThanThreeDot(item)}</>
+                              )}
+                            </div>
+                          )
                         ) : (
-                          <div className="text">
-                            {!item.regex ? (
-                              <>{item.text}</>
-                            ) : (
-                              <>{handleMoreThanThreeDot(item)}</>
-                            )}
-                          </div>
-                        )
-                      ) : (
-                        <Table tableArray={item?.table} />
-                      )}
-                    </div>
-                  );
-                })}
+                          <Table tableArray={item?.table} />
+                        )}
+                      </div>
+                    );
+                  })}
 
-                {/* <div className="sign">
-                  <span>امضاومهر کارگزاری</span>
-                  <span>امضاومهر مشتری</span>
-                </div> */}
-              </div>
-            ))
+                  {/* <div className="sign">
+                    <span>امضاومهر کارگزاری</span>
+                    <span>امضاومهر مشتری</span>
+                    <img src="public/vite.svg" />
+                  </div> */}
+                </div>
+              );
+            })
           )}
         </div>
       </div>
+      <button onClick={convertToPdf}>Convert to PDF</button>
     </>
   );
 }

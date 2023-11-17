@@ -86,11 +86,10 @@ p {
 .pageContent {
   border: 2px solid black;
   border-radius: 5px;
-  padding: 10px;
-  margin-bottom: 12px;
-  margin-top: 16px;
+  padding: 3mm;
   /* height: 1000px; */
-  height: 274mm;
+  height: 271mm;
+  width: 700px;
 }
 
 .pageA4 {
@@ -102,4 +101,9 @@ p {
 .container {
   display: flex;
   justify-content: center;
+}
+
+.btnContainer {
+  display: flex;
+  flex-direction: column;
 }
