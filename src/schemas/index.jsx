@@ -8,9 +8,7 @@ import Table from "./table";
 let hr = 1;
 
 function Sechma() {
-  const pageRef = useRef();
-  const htmlElementRef = useRef(null);
-  const [url, setUrl] = useState("");
+
   const handleMoreThanThreeDot = (item) => {
     if (item.values) {
       const resultArray = [];
@@ -137,11 +135,11 @@ function Sechma() {
                     );
                   })}
 
-                  {/* <div className="sign">
+                  <div className="sign">
                     <span>امضاومهر کارگزاری</span>
                     <span>امضاومهر مشتری</span>
                     <img src="public/vite.svg" />
-                  </div> */}
+                  </div>
                 </div>
               );
             })
