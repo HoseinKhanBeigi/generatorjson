@@ -53,14 +53,12 @@ function Sechma() {
 
     function reverseParentheses(sentence) {
       return sentence.replace(/[()]/g, function (match) {
-        // Reverse the parentheses
         return match === "(" ? ")" : "(";
       });
     }
 
     function reverseDoubleAngleQuotes(sentence) {
       return sentence.replace(/[«»]/g, function (match) {
-        // Reverse the double angle quotes
         return match === "«" ? "»" : "«";
       });
     }
@@ -69,33 +67,74 @@ function Sechma() {
       return sentence.replace(/^[A-Za-z0-9]+\s/, "");
     }
 
-    function reverseWord(word) {
-      // Split the word into an array of characters
-      var characters = word.split("");
-
-      // Reverse the array
-      var reversedCharacters = characters.reverse();
-
-      // Join the array back into a string
-      var reversedWord = reversedCharacters.join("");
-
-      return reversedWord;
-    }
-
-    function rearrangeSentence(sentence, url) {
+    function rearrangeSentence(sentence) {
       var words = sentence.split(/\s+/);
-      var englishIndex = words.findIndex((word) => /^[A-Za-z]+$/.test(word));
+
       if (englishIndex !== -1) {
         var persianIndex = words.findIndex((word) =>
           /^[\u0600-\u06FF]+$/.test(word)
         );
         if (persianIndex !== -1) {
-          words.splice(persianIndex + 1, 0, url);
+          words.splice(persianIndex + 1, 0);
         }
       }
       var rearrangedSentence = words.join(" ");
       return rearrangedSentence;
     }
+
+    function joinWordsWithDirection(words, separator) {
+      let result = "";
+      let isEnglish = false;
+
+      words.forEach((word, index) => {
+        // Detect if the word contains English characters
+        if (/^[a-zA-Z0-9]+$/.test(word)) {
+          isEnglish = true;
+        }
+
+        // Add separator between words (except for the first word)
+        if (index > 0) {
+          result += separator;
+        }
+
+        // Add the word to the result
+        result += word;
+
+        // If the current word is English and the next word is Persian, add a space for separation
+        if (
+          isEnglish &&
+          index < words.length - 1 &&
+          /^[^\u0000-\u007F]+$/.test(words[index + 1])
+        ) {
+          result += " ";
+        }
+      });
+
+      return result;
+    }
+
+    const originalArray = [
+      "به",
+      "نشانی",
+      "سایت",
+      "اینترنتی",
+      "ggg",
+      "شسی",
+      "text",
+      "888",
+      "tetete",
+      "شسیشسی",
+      "شسیشسی",
+      "شسیشسی",
+    ];
+    let a = "";
+    let l = "";
+    const tes = `${originalArray[11]} ${originalArray[10]} ${originalArray[9]} ${originalArray[8]} ${originalArray[7]} ${originalArray[6]} ${originalArray[5]} ${originalArray[4]}  ${originalArray[0]} ${originalArray[1]} ${originalArray[2]} ${originalArray[3]} `;
+    // console.log(tes);
+
+    originalArray.map((item) => {});
+
+    // Join Persian and English words with a space in between
 
     data1.map((e, idx) =>
       e.pages?.map((page) => {
@@ -114,26 +153,43 @@ function Sechma() {
           }
 
           const lines = pdf.splitTextToSize(item.text, 250);
-          console.log(lines, "lines");
 
           let result = [];
           let currentLine = "";
+          let isEnglish = false;
           const arr = lines.map((item) => item.split(" ")).flat(Infinity);
+          const test = arr.findIndex((item) => /^[A-Za-z]+$/.test(item));
+          if (item.text !== undefined) {
+            const test2 = item.text?.split(" ");
+            const res = test2.findIndex((item) => /^[A-Za-z]/.test(item));
+            console.log(res);
+          }
+          // arr.map((e) => {
+          //   if (Array.isArray(e)) {
+          //   }
+          // });
 
           for (let i = 0; i < arr.length; i++) {
             const word = arr[i];
+            if (/^www\./.test(word)) {
+              isEnglish = true;
+            }
             if (
               pdf.getStringUnitWidth(currentLine) +
                 pdf.getStringUnitWidth(word) <=
               55
             ) {
+              if (isEnglish) {
+                currentLine += " ";
+              }
               if (currentLine !== "") {
                 currentLine += " ";
               }
-              currentLine += word;
+
+              currentLine += `${word}`;
             } else {
               result.push(currentLine);
-              currentLine = word;
+              currentLine = `${word}`;
             }
           }
           if (currentLine !== "") {
@@ -143,14 +199,11 @@ function Sechma() {
           item.id !== "table"
             ? lines.length > 1
               ? result.forEach((line) => {
-                  const textWidth =
-                    pdf.getStringUnitWidth(line) * pdf.internal.getFontSize();
-                  if (cursorX + textWidth > pageWidth - margin) {
-                    cursorX = margin;
-                  }
                   y += 10;
                   pdf.text(
-                    reverseParentheses(reverseDoubleAngleQuotes(line)),
+                    reverseEnglishWords(
+                      reverseParentheses(reverseDoubleAngleQuotes(line))
+                    ),
                     205,
                     y,
                     {
