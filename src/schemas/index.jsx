@@ -113,20 +113,153 @@ function Sechma() {
       return result;
     }
 
-    const originalArray = [
+
+
+    const orginal2 = [
+      "در",
+      "اجرای",
+      "ماده",
+      "14",
+      "«دستورالعمل",
+      "اجرایی",
+      "معاملات",
+      "برخط»،",
+      "این",
+      "قرارداد",
+      "بین",
+      "شرکت",
+      "کارگزاری",
+      "خبرگان",
+      "سهام",
+      "(سهامی",
+      "خاص)",
       "به",
+      "شماره",
+      "ثبت",
+      "111591",
+      "و",
+      "شناسه",
+      "ملی",
+      "10101553125",
+      "با",
+      "نمایندگی",
+      "آقای",
+      "ناصر",
+      "آقاجانی",
+      "(به",
+      "سمت",
+      "مدیرعامل",
+      "و",
+      "نائب",
+      "رئیس",
+      "هیئت",
+      "مدیره)",
+      "و",
+      "آقای",
+      "سید",
+      "محسن",
+      "حسینی",
+      "خلیلی",
+      "(به",
+      "سمت",
+      "رئیس",
+      "هیئت",
+      "مدیره)",
+      "به",
+      "نشانی",
+      "تهران",
+      "-",
+      "ميدان",
+      "ونك",
+      "–",
+      "خيابان",
+      "گاندي",
+      "–",
+      "خيابان",
+      "بیست",
+      "و",
+      "یکم",
+      "–",
+      "پلاك",
+      "7،",
+      "کدپستی",
+      "1517938314،",
+      "شماره",
+      "تلفن",
+      "42382",
+      "و",
       "نشانی",
       "سایت",
       "اینترنتی",
-      "ggg",
-      "شسی",
-      "text",
-      "888",
-      "tetete",
-      "شسیشسی",
-      "شسیشسی",
-      "شسیشسی",
     ];
+
+    const fake2 = [
+      "www.khobregan.com",
+      "که",
+      "از",
+      "این",
+      "پس",
+      "«کارگزار»",
+      "نامیده",
+      "می‌شود",
+      "از",
+      "یک",
+      "طرف،",
+      "و",
+      "«مشتری»",
+      "با",
+      "مشخصات",
+      "مندرج",
+      "در",
+      "جدول",
+      "زیر",
+      "از",
+      "طرف",
+      "دیگر،",
+      "به",
+      "شرح",
+      "مواد",
+      "ذیل",
+      "منعقد",
+      "گردید:",
+    ];
+    const fake = [
+      
+      "که",
+      "از",
+      "این",
+      "پس",
+      "«کارگزار»",
+      "نامیده",
+      "می‌شود",
+      "از",
+      "یک",
+      "طرف،",
+      "و",
+      "«مشتری»",
+      "مندرج",
+      "در",
+      "جدول",
+      "زیر",
+      "از",
+      "طرف",
+      "دیگر،",
+ 
+   
+    ];
+
+    const originalArray = [
+      "در",
+      "اجرای",
+      "ماده",
+      "دستورالعمل",
+      "اجرایی",
+      "معاملات",
+      "برخط",
+    ];
+
+    const realArr = [...fake, "www.khobregan.com", ...originalArray];
+
     let a = "";
     let l = "";
     const tes = `${originalArray[11]} ${originalArray[10]} ${originalArray[9]} ${originalArray[8]} ${originalArray[7]} ${originalArray[6]} ${originalArray[5]} ${originalArray[4]}  ${originalArray[0]} ${originalArray[1]} ${originalArray[2]} ${originalArray[3]} `;
@@ -156,54 +289,57 @@ function Sechma() {
 
           let result = [];
           let currentLine = "";
-          let isEnglish = false;
+          let modifyOrginalArray = [];
+          const rotateArray = [];
           const arr = lines.map((item) => item.split(" ")).flat(Infinity);
-          const test = arr.findIndex((item) => /^[A-Za-z]+$/.test(item));
-          if (item.text !== undefined) {
-            const test2 = item.text?.split(" ");
-            const res = test2.findIndex((item) => /^[A-Za-z]/.test(item));
-            console.log(res);
-          }
-          // arr.map((e) => {
-          //   if (Array.isArray(e)) {
-          //   }
-          // });
+          const arr2 = lines.map((item) => item.split(" ")).flat(Infinity);
+          const orig = lines.map((item) => item.split(" ")).flat(Infinity);
+          const pivotIndex = arr.findIndex((e) => /^[A-Za-z]/.test(e));
+          if (pivotIndex !== -1 || pivotIndex !== 0) {
+            const test = arr.slice(pivotIndex + 1, arr.length);
+            test.map((e) => rotateArray.push(e));
+            const testt = orig.slice(0, pivotIndex - 1);
 
-          for (let i = 0; i < arr.length; i++) {
-            const word = arr[i];
-            if (/^www\./.test(word)) {
-              isEnglish = true;
+             modifyOrginalArray = [...rotateArray, "www.khobregan.com" ,...testt];
+
+            for (let i = 0; i < arr.length; i++) {
+              const word = arr[i];
+             
+              if (
+                pdf.getStringUnitWidth(currentLine) +
+                  pdf.getStringUnitWidth(word) <=
+                55
+              ) {
+                if (currentLine !== "") {
+                  currentLine += " ";
+                }
+                if(word === 'www.khobregan.com'){
+                  currentLine =  'www.khobregan.com';
+                }else{
+                  currentLine += `${word}`;
+                }
+              
+              } else {
+               
+                result.push(currentLine);
+                currentLine = `${word}`;
+              }
             }
-            if (
-              pdf.getStringUnitWidth(currentLine) +
-                pdf.getStringUnitWidth(word) <=
-              55
-            ) {
-              if (isEnglish) {
-                currentLine += " ";
-              }
-              if (currentLine !== "") {
-                currentLine += " ";
-              }
-
-              currentLine += `${word}`;
-            } else {
+            if (currentLine !== "") {
               result.push(currentLine);
-              currentLine = `${word}`;
             }
           }
-          if (currentLine !== "") {
-            result.push(currentLine);
-          }
+
+
+
+          
 
           item.id !== "table"
             ? lines.length > 1
               ? result.forEach((line) => {
                   y += 10;
                   pdf.text(
-                    reverseEnglishWords(
-                      reverseParentheses(reverseDoubleAngleQuotes(line))
-                    ),
+                    reverseParentheses(reverseDoubleAngleQuotes(line)),
                     205,
                     y,
                     {
