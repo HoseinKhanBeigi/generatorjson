@@ -1,6 +1,8 @@
 import { useRef } from "react";
 
 import { jsPDF } from "jspdf";
+// import rtlcss from "rtl-css-js";
+
 import forntjs from "../assets/IRANSans4/WebFonts/fonts/ttf/IRANSansWeb.ttf";
 
 import data1 from "../formDocOne.json";
@@ -113,8 +115,6 @@ function Sechma() {
       return result;
     }
 
-
-
     const orginal2 = [
       "در",
       "اجرای",
@@ -224,7 +224,6 @@ function Sechma() {
       "گردید:",
     ];
     const fake = [
-      
       "که",
       "از",
       "این",
@@ -244,8 +243,6 @@ function Sechma() {
       "از",
       "طرف",
       "دیگر،",
- 
-   
     ];
 
     const originalArray = [
@@ -285,57 +282,38 @@ function Sechma() {
             pdf.addPage();
           }
 
-          const lines = pdf.splitTextToSize(item.text, 250);
-
-          let result = [];
           let currentLine = "";
-          let modifyOrginalArray = [];
-          const rotateArray = [];
-          const arr = lines.map((item) => item.split(" ")).flat(Infinity);
-          const arr2 = lines.map((item) => item.split(" ")).flat(Infinity);
-          const orig = lines.map((item) => item.split(" ")).flat(Infinity);
-          const pivotIndex = arr.findIndex((e) => /^[A-Za-z]/.test(e));
-          if (pivotIndex !== -1 || pivotIndex !== 0) {
-            const test = arr.slice(pivotIndex + 1, arr.length);
-            test.map((e) => rotateArray.push(e));
-            const testt = orig.slice(0, pivotIndex - 1);
+          const result = [];
+          const arr = item.text?.split(" ");
 
-             modifyOrginalArray = [...rotateArray, "www.khobregan.com" ,...testt];
+          for (let i = 0; i < arr?.length; i++) {
+            const word = arr[i];
 
-            for (let i = 0; i < arr.length; i++) {
-              const word = arr[i];
-             
-              if (
-                pdf.getStringUnitWidth(currentLine) +
-                  pdf.getStringUnitWidth(word) <=
-                55
-              ) {
-                if (currentLine !== "") {
-                  currentLine += " ";
-                }
-                if(word === 'www.khobregan.com'){
-                  currentLine =  'www.khobregan.com';
-                }else{
-                  currentLine += `${word}`;
-                }
-              
-              } else {
-               
-                result.push(currentLine);
-                currentLine = `${word}`;
+            if (
+              pdf.getStringUnitWidth(currentLine) +
+                pdf.getStringUnitWidth(word) <=
+              55
+            ) {
+              if (currentLine !== "") {
+                currentLine += " ";
               }
-            }
-            if (currentLine !== "") {
+
+              if (word === "www.khobregan.com") {
+                currentLine = "    " + currentLine + "       _s ";
+              } else if (word !== "www.khobregan.com") {
+                currentLine += `${word}`;
+              }
+            } else {
               result.push(currentLine);
+              currentLine = `${word}`;
             }
           }
-
-
-
-          
+          if (currentLine !== "") {
+            result.push(currentLine);
+          }
 
           item.id !== "table"
-            ? lines.length > 1
+            ? arr.length > 1
               ? result.forEach((line) => {
                   y += 10;
                   pdf.text(
