@@ -1,7 +1,11 @@
 import { useRef } from "react";
 
-import { jsPDF } from "jspdf";
+import  jsPDF  from "../schemas/pdfjs/src/index";
+import ArabicFormatter from 'arabic-formatter';
 // import rtlcss from "rtl-css-js";
+
+// import bidiFactory from "bidi-js";
+// or: const bidiFactory = require('bidi-js')
 
 import forntjs from "../assets/IRANSans4/WebFonts/fonts/ttf/IRANSansWeb.ttf";
 
@@ -10,6 +14,7 @@ import "./schema.css";
 import Table from "./table";
 
 function Sechma() {
+  // const bidi = bidiFactory();
   const handleMoreThanThreeDot = (item) => {
     if (item.values) {
       const resultArray = [];
@@ -38,7 +43,7 @@ function Sechma() {
 
   const makePdf = () => {
     var pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
-    // pdf.setR2L(true); //RTL
+    pdf.setR2L(true); //RTL
     pdf.addFont(forntjs, "Amiri", "normal");
 
     pdf.setFont("Amiri"); // set font
@@ -46,225 +51,9 @@ function Sechma() {
     pdf.setFontSize(10);
 
     let y = 10;
-    let pragraphHeight = y;
     let pageHeight = 10;
     const margin = 10;
     const threshold = pdf.internal.pageSize.height - 2 * margin;
-    const pageWidth = pdf.internal.pageSize.width;
-    let cursorX = margin;
-
-    function reverseParentheses(sentence) {
-      return sentence.replace(/[()]/g, function (match) {
-        return match === "(" ? ")" : "(";
-      });
-    }
-
-    function reverseDoubleAngleQuotes(sentence) {
-      return sentence.replace(/[«»]/g, function (match) {
-        return match === "«" ? "»" : "«";
-      });
-    }
-
-    function reverseEnglishWords(sentence) {
-      return sentence.replace(/^[A-Za-z0-9]+\s/, "");
-    }
-
-    function rearrangeSentence(sentence) {
-      var words = sentence.split(/\s+/);
-
-      if (englishIndex !== -1) {
-        var persianIndex = words.findIndex((word) =>
-          /^[\u0600-\u06FF]+$/.test(word)
-        );
-        if (persianIndex !== -1) {
-          words.splice(persianIndex + 1, 0);
-        }
-      }
-      var rearrangedSentence = words.join(" ");
-      return rearrangedSentence;
-    }
-
-    function joinWordsWithDirection(words, separator) {
-      let result = "";
-      let isEnglish = false;
-
-      words.forEach((word, index) => {
-        // Detect if the word contains English characters
-        if (/^[a-zA-Z0-9]+$/.test(word)) {
-          isEnglish = true;
-        }
-
-        // Add separator between words (except for the first word)
-        if (index > 0) {
-          result += separator;
-        }
-
-        // Add the word to the result
-        result += word;
-
-        // If the current word is English and the next word is Persian, add a space for separation
-        if (
-          isEnglish &&
-          index < words.length - 1 &&
-          /^[^\u0000-\u007F]+$/.test(words[index + 1])
-        ) {
-          result += " ";
-        }
-      });
-
-      return result;
-    }
-
-    const orginal2 = [
-      "در",
-      "اجرای",
-      "ماده",
-      "14",
-      "«دستورالعمل",
-      "اجرایی",
-      "معاملات",
-      "برخط»،",
-      "این",
-      "قرارداد",
-      "بین",
-      "شرکت",
-      "کارگزاری",
-      "خبرگان",
-      "سهام",
-      "(سهامی",
-      "خاص)",
-      "به",
-      "شماره",
-      "ثبت",
-      "111591",
-      "و",
-      "شناسه",
-      "ملی",
-      "10101553125",
-      "با",
-      "نمایندگی",
-      "آقای",
-      "ناصر",
-      "آقاجانی",
-      "(به",
-      "سمت",
-      "مدیرعامل",
-      "و",
-      "نائب",
-      "رئیس",
-      "هیئت",
-      "مدیره)",
-      "و",
-      "آقای",
-      "سید",
-      "محسن",
-      "حسینی",
-      "خلیلی",
-      "(به",
-      "سمت",
-      "رئیس",
-      "هیئت",
-      "مدیره)",
-      "به",
-      "نشانی",
-      "تهران",
-      "-",
-      "ميدان",
-      "ونك",
-      "–",
-      "خيابان",
-      "گاندي",
-      "–",
-      "خيابان",
-      "بیست",
-      "و",
-      "یکم",
-      "–",
-      "پلاك",
-      "7،",
-      "کدپستی",
-      "1517938314،",
-      "شماره",
-      "تلفن",
-      "42382",
-      "و",
-      "نشانی",
-      "سایت",
-      "اینترنتی",
-    ];
-
-    const fake2 = [
-      "www.khobregan.com",
-      "که",
-      "از",
-      "این",
-      "پس",
-      "«کارگزار»",
-      "نامیده",
-      "می‌شود",
-      "از",
-      "یک",
-      "طرف،",
-      "و",
-      "«مشتری»",
-      "با",
-      "مشخصات",
-      "مندرج",
-      "در",
-      "جدول",
-      "زیر",
-      "از",
-      "طرف",
-      "دیگر،",
-      "به",
-      "شرح",
-      "مواد",
-      "ذیل",
-      "منعقد",
-      "گردید:",
-    ];
-    const fake = [
-      "که",
-      "از",
-      "این",
-      "پس",
-      "«کارگزار»",
-      "نامیده",
-      "می‌شود",
-      "از",
-      "یک",
-      "طرف،",
-      "و",
-      "«مشتری»",
-      "مندرج",
-      "در",
-      "جدول",
-      "زیر",
-      "از",
-      "طرف",
-      "دیگر،",
-    ];
-
-    const originalArray = [
-      "در",
-      "اجرای",
-      "ماده",
-      "دستورالعمل",
-      "اجرایی",
-      "معاملات",
-      "برخط",
-    ];
-
-    const realArr = [...fake, "www.khobregan.com", ...originalArray];
-
-    let a = "";
-    let l = "";
-    const tes = `${originalArray[11]} ${originalArray[10]} ${originalArray[9]} ${originalArray[8]} ${originalArray[7]} ${originalArray[6]} ${originalArray[5]} ${originalArray[4]}  ${originalArray[0]} ${originalArray[1]} ${originalArray[2]} ${originalArray[3]} `;
-    // console.log(tes);
-
-    originalArray.map((item) => {});
-
-    // Join Persian and English words with a space in between
 
     data1.map((e, idx) =>
       e.pages?.map((page) => {
@@ -277,7 +66,7 @@ function Sechma() {
 
           if (pageHeight > threshold) {
             y = 10;
-            pragraphHeight = y;
+            // pragraphHeight = y;
             pageHeight = 0;
             pdf.addPage();
           }
@@ -285,6 +74,8 @@ function Sechma() {
           let currentLine = "";
           const result = [];
           const arr = item.text?.split(" ");
+
+        
 
           for (let i = 0; i < arr?.length; i++) {
             const word = arr[i];
@@ -298,11 +89,7 @@ function Sechma() {
                 currentLine += " ";
               }
 
-              if (word === "www.khobregan.com") {
-                currentLine = "    " + currentLine + "       _s ";
-              } else if (word !== "www.khobregan.com") {
-                currentLine += `${word}`;
-              }
+              currentLine += `${word}`;
             } else {
               result.push(currentLine);
               currentLine = `${word}`;
@@ -312,12 +99,15 @@ function Sechma() {
             result.push(currentLine);
           }
 
+   
+          console.log(result,"result")
+
           item.id !== "table"
             ? arr.length > 1
               ? result.forEach((line) => {
                   y += 10;
                   pdf.text(
-                    reverseParentheses(reverseDoubleAngleQuotes(line)),
+                    line,
                     205,
                     y,
                     {
@@ -326,7 +116,7 @@ function Sechma() {
                   );
                 })
               : pdf.text(
-                  reverseParentheses(reverseDoubleAngleQuotes(item.text)),
+                  item.text,
                   205,
                   y,
                   {
