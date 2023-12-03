@@ -298,11 +298,7 @@ function Sechma() {
                 currentLine += " ";
               }
 
-              if (word === "www.khobregan.com") {
-                currentLine = "    " + currentLine + "       _s ";
-              } else if (word !== "www.khobregan.com") {
-                currentLine += `${word}`;
-              }
+              currentLine += `${word}`;
             } else {
               result.push(currentLine);
               currentLine = `${word}`;
