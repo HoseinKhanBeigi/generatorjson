@@ -1,0 +1,115 @@
+{
+    "_id" : "63f4a8431e2750864d3225df",
+    "name" : "demo-sejam",
+    "orgCode" : "DEMO",
+    "productGroup" : "SEJAM",
+    "label" : "کارگزاری خبرگان سهام",
+    "title" : "کارگزاری خبرگان سهام",
+    "description" : "کارگزاری خبرگان سهام",
+    "portalAddress" : "https://www.khobregan.com/",
+    "phone" : "02143000043",
+    "startFor" : [
+        {
+            "label" : "خودم",
+            "value" : "MYSELF",
+            "uniqIdLabel" : "کد ملی",
+            "type" : "INDEVIDVAL",
+            "disabled" : false
+        }
+    ],
+    "logo" : "https://www.khobregan.com/public/assets/images/xobregan/logo.png",
+    "baseUrl" : {
+        "server" : "https://mt.levants.io/usermgmt",
+        "file" : "https://mt.levants.io/glusterproxy/api"
+    },
+    "auth" : {
+        "clientId" : "onboarding-web",
+        "baseUrl" : "https://mt.neshanid.io/auth/realms/demo/protocol/openid-connect"
+    },
+    "errorOnTypes" : {
+        "normal" : {
+            "message" : "برای ثبت نام در این محصول، شما باید قبلا حتما در سامانه سجام ثبت نام کرده باشید. لطفا پس از ثبت نام در سجام، دوباره تلاش کنید.",
+            "links" : [
+                {
+                    "label" : "ثبت نام سجام",
+                    "href" : "https://onboarding-web.mt.levants.io/onboarding/demo-sejam"
+                }
+            ]
+        },
+        "light" : {
+            "message" : "در حال حاضر شما نمیتوانید پروسه ثبت‌نام را پیش ببرید، لطفا با پشتیبانی تماس بگیرید.",
+            "links" : [
+
+            ]
+        },
+        "start_sejam_product" : {
+            "message" : "برای ثبت نام در این محصول، شما باید قبلا حتما در سامانه سجام ثبت نام کرده باشید. لطفا پس از ثبت نام در سجام، دوباره تلاش کنید.",
+            "links" : [
+                {
+                    "label" : "ثبت نام سجام",
+                    "href" : "https://onboarding-web.mt.levants.io/onboarding/demo-sejam"
+                }
+            ]
+        },
+        "start_video_kyc_product" : {
+            "message" : "پیش از ثبت‌نام در این محصول باید احراز هویت ثبت نام سجام خود را با موفقیت به اتمام برسانید.",
+            "links" : [
+                {
+                    "label" : "احراز هویت ویدیویی",
+                    "href" : "https://demo.mt.levants.io/"
+                }
+            ]
+        }
+    },
+    "actions" : {
+        "getApplications" : {
+            "url" : "/api/v1/onboarding/home2",
+            "method" : "GET",
+            "header" : {
+                "Authorization" : "bearer ${localStorage:token}",
+                "application-name" : "${data:orgCode}"
+            },
+            "body" : {
+
+            }
+        },
+        "getApplication" : {
+            "url" : "/api/v1/users/applications/${data:applicationId}",
+            "method" : "GET",
+            "header" : {
+                "Authorization" : "bearer ${localStorage:token}",
+                "application-name" : "${data:orgCode}"
+            },
+            "body" : {
+
+            }
+        },
+        "startApplication" : {
+            "url" : "/api/v1/users/start",
+            "method" : "POST",
+            "header" : {
+                "Authorization" : "bearer ${localStorage:token}",
+                "application-name" : "${data:orgCode}",
+                "mock" : true,
+                "mockResult" : "Sejami"
+            },
+            "body" : {
+                "startOnboardingFor" : "${data:relation}",
+                "uniqueIdentifier" : "${data:uniqId}",
+                "productGroupCode" : "${data:productGroup}"
+            }
+        },
+        "submitApplicationReferral" : {
+            "url" : "/api/v1/users/ref/${data:applicationId}",
+            "method" : "PUT",
+            "header" : {
+                "Authorization" : "bearer ${localStorage:token}",
+                "application-name" : "${data:orgCode}"
+            },
+            "body" : {
+                "code" : "${data:code}"
+            }
+        }
+    },
+    "ocrRequest" : null
+}

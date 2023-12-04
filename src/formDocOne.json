@@ -84,14 +84,13 @@
                 {
                   "text": "آدرس منزل و کد پستی:",
                   "name": ["full_address", "postal_code"]
-                }
-              ],
-              [
+                },
                 {
                   "text": "آدرس محل کار:",
                   "name": "full_work_address"
                 }
               ]
+            
             ],
             "id": "table"
           },

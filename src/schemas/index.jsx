@@ -1,20 +1,8 @@
 import { useRef } from "react";
-import {
-  Document,
-  Page,
-  Text,
-  View,
-  StyleSheet,
-  PDFViewer,
-  BlobProvider,
-  Font,
-} from "@react-pdf/renderer";
-// import IranSansFont from "iransans/web/IRANSansWeb.ttf";
+import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 
-import jsPDF from "../schemas/pdfjs/src/index";
+import jsPDF from "./pdfjs/src/index";
 import html2pdf from "./pdf/index";
-
-import { saveAs } from "file-saver";
 // import rtlcss from "rtl-css-js";
 
 // import bidiFactory from "bidi-js";
@@ -26,7 +14,34 @@ import data1 from "../formDocOne.json";
 import "./schema.css";
 import Table from "./table";
 
-function MyDocument() {
+function Sechma() {
+  // const bidi = bidiFactory();
+  const handleMoreThanThreeDot = (item) => {
+    if (item.values) {
+      const resultArray = [];
+      let replacementIndex = 0;
+      const dotPattern = /\.{3,}/g;
+      const result = item.text.split(/(\.{3,})/);
+
+      for (const sentence of result) {
+        if (dotPattern.test(sentence)) {
+          resultArray.push(item.values[replacementIndex]);
+          replacementIndex++;
+          const idx = resultArray.findIndex((e) => e === undefined);
+          if (idx !== -1) {
+            resultArray[idx] = "..........................";
+          }
+        } else {
+          resultArray.push(sentence);
+        }
+      }
+
+      return resultArray.map((el) => <>{el}</>);
+    }
+  };
+
+  const contentRef = useRef(null);
+
   const originalArray = [
     "پلاك",
     "7،",
@@ -120,8 +135,6 @@ function MyDocument() {
           const result = [];
           const arr = item.text?.split(" ");
 
-          console.log(arr);
-
           for (let i = 0; i < arr?.length; i++) {
             const word = arr[i];
 
@@ -129,12 +142,11 @@ function MyDocument() {
               if (currentLine !== "") {
                 currentLine += " ";
               }
-              //ad sdsda شسیشس شس یشسی شی س
 
               if (word !== "www.khobregan.com") {
                 currentLine += `${word}`;
               } else {
-                currentLine = " " + word;
+                currentLine = parseInt(word) + currentLine;
               }
             } else {
               result.push(currentLine);
@@ -187,126 +199,12 @@ function MyDocument() {
       y += 10;
     });
   };
-  Font.register({ family: "IranSans", src: forntjs });
-  const styles = StyleSheet.create({
-    page: {
-      display: "flex",
-      flexDirection: "column",
-    },
-    table: {
-      display: "flex",
-      flexDirection: "column",
-      marginTop: 0,
-    },
-    tableRow: { flexDirection: "row" },
-    tableCol: {
-      width: "25%",
-      borderStyle: "solid",
-      borderWidth: 1,
-      borderLeftWidth: 0,
-      borderTopWidth: 0,
-    },
-    cell: {
-      fontSize: 12,
-    },
-
-    section: {
-      margin: 10,
-      padding: 10,
-
-      flexWrap: "wrap",
-      flexDirection: "row-reverse",
-    },
-    cell2: {
-      fontSize: 12,
-      fontFamily: "IranSans",
-    },
-  });
 
   return (
-    <Document>
-      <Page size="A4" style={styles.page}>
-        <View style={styles.section}>
-          {data1[0].pages[0].entities[2].text.split(" ").map((word, idx) => {
-            return (
-              <Text style={styles.cell2} key={idx}>
-                {word}
-              </Text>
-            );
-          })}
-        </View>
-        <View style={styles.table}>
-          {[1, 2]?.map((row, index) => (
-            <View style={styles.tableRow}>
-              {[1, 2, 3].map((cell) => (
-                <View style={styles.tableCol}>
-                  <Text style={styles.cell}>Cell 1</Text>
-                </View>
-              ))}
-            </View>
-          ))}
-        </View>
-      </Page>
-    </Document>
-  );
-}
-
-const SaveAsPDFButton = () => (
-  <BlobProvider document={<MyDocument />}>
-    {({ blob, url, loading, error }) => {
-      console.log(blob);
-      return (
-        <button
-          onClick={() => {
-            saveAs(blob, "document.pdf");
-          }}
-        >
-          Save as PDF
-        </button>
-      );
-    }}
-  </BlobProvider>
-);
-
-function Sechma() {
-  const saveAsPDF = async () => {
-    const blob = await MyDocument.toBlob();
-    saveAs(blob, "document.pdf");
-  };
-
-  // const bidi = bidiFactory();
-  const handleMoreThanThreeDot = (item) => {
-    if (item.values) {
-      const resultArray = [];
-      let replacementIndex = 0;
-      const dotPattern = /\.{3,}/g;
-      const result = item.text.split(/(\.{3,})/);
-
-      for (const sentence of result) {
-        if (dotPattern.test(sentence)) {
-          resultArray.push(item.values[replacementIndex]);
-          replacementIndex++;
-          const idx = resultArray.findIndex((e) => e === undefined);
-          if (idx !== -1) {
-            resultArray[idx] = "..........................";
-          }
-        } else {
-          resultArray.push(sentence);
-        }
-      }
-
-      return resultArray.map((el) => <>{el}</>);
-    }
-  };
-
-  const contentRef = useRef(null);
-
-  return (
-    <div>
-      <PDFViewer>
-        <MyDocument />
-      </PDFViewer>
-      <SaveAsPDFButton />
+    <>
+      <div className="btnContainer">
+        <button onClick={makePdf}>makePdf</button>
+      </div>
       <div className="container" ref={contentRef}>
         <div className="pageA4">
           {data1.map((e) =>
@@ -353,7 +251,8 @@ function Sechma() {
           )}
         </div>
       </div>
-    </div>
+      <button>Convert to PDF</button>
+    </>
   );
 }
 
