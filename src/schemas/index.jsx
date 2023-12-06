@@ -42,31 +42,17 @@ function Sechma() {
 
   const contentRef = useRef(null);
 
-  const originalArray = [
-    "پلاك",
-    "7،",
-    "کدپستی",
-    "1517938314،",
-    "شماره",
-    "تلفن",
-    "",
-    "42382",
-    "و",
-    "",
-    "نشانی",
-    "سایت",
-    "اینترنتی",
-    "www.khobregan.com",
-    "که",
-    "از",
-    "این",
-    "پس",
-  ];
+  function reverseParentheses(sentence) {
+    return sentence.replace(/[()]/g, function (match) {
+      return match === "(" ? ")" : "(";
+    });
+  }
 
-  // Specify the indices you want to change
-  const indicesToReplace = [
-    17, 15, 15, 14, 13, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
-  ];
+  function reverseDoubleAngleQuotes(sentence) {
+    return sentence.replace(/[«»]/g, function (match) {
+      return match === "«" ? "»" : "«";
+    });
+  }
 
   const convertToPdf = async () => {
     var opt = {
@@ -97,16 +83,20 @@ function Sechma() {
       });
   };
 
-  // Create a new array with the replaced elements
-  const newArray = indicesToReplace.map((index) => originalArray[index]);
-  console.log(newArray.join(" "));
 
-  const makePdf = () => {
+  const makePdf = async () => {
     var pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
     // pdf.setR2L(true); //RTL
-    pdf.addFont(forntjs, "Amiri", "normal");
+    const fontData = await fetch(forntjs).then((response) =>
+      response.arrayBuffer()
+    );
 
-    pdf.setFont("Amiri"); // set font
+    // Use the font in the PDF
+    pdf.addFileToVFS("IRANSansWeb.ttf", fontData);
+    pdf.addFont(forntjs, "Arial", "normal");
+    // pdf.addFont(forntjs, "Amiri", "normal");
+
+    pdf.setFont("Arial");
 
     pdf.setFontSize(10);
 
@@ -134,20 +124,16 @@ function Sechma() {
           let currentLine = "";
           const result = [];
           const arr = item.text?.split(" ");
+          let word = "";
 
           for (let i = 0; i < arr?.length; i++) {
-            const word = arr[i];
+            word = arr[i];
 
             if (pdf.getStringUnitWidth(currentLine) <= 55) {
               if (currentLine !== "") {
                 currentLine += " ";
               }
-
-              if (word !== "www.khobregan.com") {
-                currentLine += `${word}`;
-              } else {
-                currentLine = parseInt(word) + currentLine;
-              }
+              currentLine += `${word}`;
             } else {
               result.push(currentLine);
               currentLine = `${word}`;

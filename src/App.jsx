@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useReducer } from "react";
-import Sechma from "./schemas/index22";
+import Sechma from "./schemas/indexLibPdf";
 
 function App() {
   return (
