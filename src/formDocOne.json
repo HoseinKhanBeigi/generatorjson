@@ -22,11 +22,11 @@
             "table": [
               [
                 {
-                  "text": "نام و نام خانوادگی:",
+                  "text": "نام و نام خانوادگی:                 ",
                   "name": ["firstName", "lastName"]
                 },
                 {
-                  "text": "جنسیت:",
+                  "text": "جنسیت:                             ",
                   "name": "male"
                 }
               ],

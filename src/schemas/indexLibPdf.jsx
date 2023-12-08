@@ -181,11 +181,13 @@ function Sechma() {
                   borderWidth: 1,
                 });
 
-                ratio += 100;
-                ratio = lenText.length < 3 ? ratio : 0;
+                ratio = lenText.length < 7 ? lengthTextLetter.length + 100 : 0;
+
+                console.log(cellX);
+
                 page.drawText(tableData[row][col].text, {
                   size: 12,
-                  x: cellX - 28 + ratio,
+                  x: cellX + 100,
                   y: cellY + 6,
                   font: regularFont,
                 });
