@@ -54,8 +54,68 @@ function Sechma() {
     pdfDoc.registerFontkit(fontkit);
     const customFont = await pdfDoc.embedFont(fontBytes);
     let heightThreshold = 30;
-    console.log(data1);
-    data1.map((e, idx) =>
+
+    const transformedData = data1.flatMap((item) => {
+      const { pages } = item;
+
+      return pages.map((page) => {
+        const { entities } = page;
+        const breakDownIndex = entities.findIndex(
+          (entity) => entity.breakDownPage === true
+        );
+
+        if (breakDownIndex !== -1) {
+          const beforeBreakDown = entities.slice(0, breakDownIndex + 1);
+          const afterBreakDown = entities.slice(breakDownIndex + 1);
+
+          const result = [
+            {
+              pages: [
+                {
+                  entities: beforeBreakDown,
+                },
+              ],
+            },
+            {
+              pages: [
+                {
+                  entities: afterBreakDown,
+                },
+              ],
+            },
+          ];
+          return result;
+        }
+        return item;
+      });
+    });
+
+    function reverseParentheses(sentence) {
+      return sentence.replace(/[()]/g, function (match) {
+        return match === "(" ? ")" : "(";
+      });
+    }
+
+    function reverseDoubleAngleQuotes(sentence) {
+      return sentence.replace(/[«»]/g, function (match) {
+        return match === "«" ? "»" : "«";
+      });
+    }
+
+    function reverseEnglishWordsAndNumbers(text) {
+      return text
+        .split(/(\s+|\b)/)
+        .map((word) => {
+          if (/^[a-zA-Z0-9]+$/.test(word)) {
+            return word.split("").reverse().join("");
+          } else {
+            return word;
+          }
+        })
+        .join("");
+    }
+
+    transformedData.flat(Infinity).map((e, idx) =>
       e.pages?.map((pg) => {
         let page = pdfDoc.addPage();
         const { width, height } = page.getSize();
@@ -63,24 +123,29 @@ function Sechma() {
 
         page.setFont(customFont);
         pg.entities.map((item, idx) => {
-          // heightThreshold += 30;
           const tableData = item?.table;
           if (item.text) {
-            const lines = splitTextIntoLines(item?.text, 100);
+            const lines = splitTextIntoLines(
+              reverseEnglishWordsAndNumbers(item?.text),
+              100
+            );
 
             lines.forEach((line, index) => {
               const textWidth = customFont.widthOfTextAtSize(line, 12);
               const xPosition = width - textWidth;
               const yPosition = height - heightThreshold - index * 24;
 
-              page.drawText(line, {
-                size: 12,
-                x: xPosition - 20,
-                y: yPosition + 10,
-              });
+              page.drawText(
+                reverseParentheses(reverseDoubleAngleQuotes(line)),
+                {
+                  size: 12,
+                  x: xPosition - 20,
+                  y: yPosition + 10,
+                }
+              );
             });
-            heightThreshold += 30 * lines.length;
-          } else {
+            heightThreshold += 27 * lines.length;
+          } else if (item?.table) {
             const cellWidth = 280;
             const cellHeight = 20;
             const tableX = 50;
@@ -89,10 +154,6 @@ function Sechma() {
                 const tableY = height - heightThreshold - row;
                 const cellX = tableX + col * cellWidth;
                 const cellY = tableY - row * cellHeight;
-                // console.log(col);
-                // Draw cell background
-
-                console.log();
 
                 const lengthTextLetter = tableData[row][col].text.split("");
                 const lenText = tableData[row][col].text.split(" ");
@@ -107,13 +168,9 @@ function Sechma() {
                   height: cellHeight,
                   borderColor: rgb(1, 0, 0),
                   borderWidth: 1,
-                  // Color: "black",
                 });
 
                 let ratioCol = lenText.length > 5 ? 5 : lenText.length;
-
-                console.log(ratioCol);
-
                 lengthTextLetter.map((e) => {
                   ratio += 5;
                 });
@@ -125,13 +182,11 @@ function Sechma() {
                 ratioCol = 1;
               }
             }
-            heightThreshold += 30 * tableData.length;
+            heightThreshold += 27 * tableData.length;
           }
         });
       })
     );
-
-    // var pdf = new BytescoutPDF();
     const pdfBytes = await pdfDoc.save();
     const blob = new Blob([pdfBytes], { type: "application/pdf" });
     const link = document.createElement("a");

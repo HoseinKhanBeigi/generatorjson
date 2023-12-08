@@ -83,7 +83,6 @@ function Sechma() {
       });
   };
 
-
   const makePdf = async () => {
     var pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
     // pdf.setR2L(true); //RTL
