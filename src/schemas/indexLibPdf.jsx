@@ -158,6 +158,7 @@ function Sechma() {
           } else if (item?.table) {
             const cellWidth = 280;
             const cellHeight = 20;
+            let ratio = 0;
             const tableX = 50;
             for (let row = 0; row < tableData.length; row++) {
               for (let col = 0; col < tableData[row].length; col++) {
@@ -168,7 +169,6 @@ function Sechma() {
                 const lengthTextLetter = tableData[row][col].text.split("");
                 const lenText = tableData[row][col].text.split(" ");
 
-                let ratio = 0;
                 const silverColor = rgb(192 / 255, 192 / 255, 192 / 255);
 
                 page.drawRectangle({
@@ -181,19 +181,18 @@ function Sechma() {
                   borderWidth: 1,
                 });
 
-                let ratioCol = lenText.length > 5 ? 5 : lenText.length;
-                lengthTextLetter.map((e) => {
-                  ratio += 5;
-                });
+                ratio += 100;
+                ratio = lenText.length < 3 ? ratio : 0;
                 page.drawText(tableData[row][col].text, {
                   size: 12,
-                  x: cellX + 230 - ratio,
+                  x: cellX - 28 + ratio,
                   y: cellY + 6,
                   font: regularFont,
                 });
-                ratioCol = 1;
               }
+              ratio = 0;
             }
+
             heightThreshold += 27 * tableData.length;
           }
         });
