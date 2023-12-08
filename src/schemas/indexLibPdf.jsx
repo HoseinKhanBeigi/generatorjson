@@ -1,6 +1,7 @@
 import { PDFDocument, rgb, degrees } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
-import forntjs from "../assets/IRANSans4/WebFonts/fonts/ttf/IRANSansWeb.ttf";
+import fontLight from "../assets/IRANSans4/WebFonts/fonts/ttf/IRANSansWeb_Light.ttf";
+import fontBold from "../assets/IRANSans4/WebFonts/fonts/ttf/IRANSansWeb_Medium.ttf";
 import data1 from "../formDocOne.json";
 import "./schema.css";
 import Table from "./table";
@@ -47,12 +48,17 @@ function Sechma() {
   }
   async function createPdf() {
     const pdfDoc = await PDFDocument.create();
-    const fontBytes = await fetch(forntjs).then((response) =>
+    const fontBytes = await fetch(fontLight).then((response) =>
+      response.arrayBuffer()
+    );
+
+    const fontBoldBytes = await fetch(fontBold).then((response) =>
       response.arrayBuffer()
     );
 
     pdfDoc.registerFontkit(fontkit);
-    const customFont = await pdfDoc.embedFont(fontBytes);
+    const regularFont = await pdfDoc.embedFont(fontBytes);
+    const boldFont = await pdfDoc.embedFont(fontBoldBytes);
     let heightThreshold = 30;
 
     const transformedData = data1.flatMap((item) => {
@@ -121,7 +127,7 @@ function Sechma() {
         const { width, height } = page.getSize();
         heightThreshold = 40;
 
-        page.setFont(customFont);
+        // page.setFont(regularFont);
         pg.entities.map((item, idx) => {
           const tableData = item?.table;
           if (item.text) {
@@ -131,7 +137,7 @@ function Sechma() {
             );
 
             lines.forEach((line, index) => {
-              const textWidth = customFont.widthOfTextAtSize(line, 12);
+              const textWidth = regularFont.widthOfTextAtSize(line, 12);
               const xPosition = width - textWidth;
               const yPosition = height - heightThreshold - index * 24;
 
@@ -141,6 +147,10 @@ function Sechma() {
                   size: 12,
                   x: xPosition - 20,
                   y: yPosition + 10,
+                  font:
+                    lines.length < 2 && item.title === true
+                      ? boldFont
+                      : regularFont,
                 }
               );
             });
@@ -159,6 +169,7 @@ function Sechma() {
                 const lenText = tableData[row][col].text.split(" ");
 
                 let ratio = 0;
+                const silverColor = rgb(192 / 255, 192 / 255, 192 / 255);
 
                 page.drawRectangle({
                   x: cellX - 32,
@@ -166,7 +177,7 @@ function Sechma() {
                   width:
                     tableData[row].length === 1 ? cellWidth * 2 : cellWidth,
                   height: cellHeight,
-                  borderColor: rgb(1, 0, 0),
+                  borderColor: silverColor,
                   borderWidth: 1,
                 });
 
@@ -178,6 +189,7 @@ function Sechma() {
                   size: 12,
                   x: cellX + 230 - ratio,
                   y: cellY + 6,
+                  font: regularFont,
                 });
                 ratioCol = 1;
               }
