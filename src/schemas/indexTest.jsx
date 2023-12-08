@@ -5,16 +5,36 @@ import data1 from "../formDocOne.json";
 import "./schema.css";
 import Table from "./table";
 
+console.log(data1);
+
 function Sechma() {
   const originalData = [
     {
       pages: [
         {
-          entities: [{}, {}, { breakDownPage: true }, {}],
+          entities: [{}, {}, { breakdownPage: true }, {}],
         },
       ],
     },
+    [
+      {
+        pages: [
+          {
+            entities: [{}, {}, { breakdownPage: true }, {}],
+          },
+        ],
+      },
+      {
+        pages: [
+          {
+            entities: [{}, {}, { breakdownPage: true }, {}],
+          },
+        ],
+      },
+    ],
   ];
+
+  console.log(originalData);
 
   const transformedData = data1.flatMap((item) => {
     const { pages } = item;
@@ -45,15 +65,15 @@ function Sechma() {
             ],
           },
         ];
-
+        // console.log(result);
         return result;
       }
-
+      // console.log(item);
       return item;
     });
   });
 
-  console.log(transformedData);
+  console.log(transformedData.flat(Infinity));
 
   return <></>;
 }
