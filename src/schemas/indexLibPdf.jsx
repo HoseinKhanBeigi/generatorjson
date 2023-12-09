@@ -187,7 +187,7 @@ function Sechma() {
 
                 page.drawText(tableData[row][col].text, {
                   size: 12,
-                  x: cellX + 100,
+                  x: cellX,
                   y: cellY + 6,
                   font: regularFont,
                 });
