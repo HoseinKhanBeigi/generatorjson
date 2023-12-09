@@ -181,9 +181,9 @@ function Sechma() {
                   borderWidth: 1,
                 });
 
-                ratio = lenText.length < 7 ? lengthTextLetter.length + 100 : 0;
+                // ratio = lenText.length < 7 ? lengthTextLetter.length + 100 : 0;
 
-                console.log(cellX);
+                // console.log(tableData[row][col].text.split(' '));
 
                 page.drawText(tableData[row][col].text, {
                   size: 12,
@@ -192,7 +192,6 @@ function Sechma() {
                   font: regularFont,
                 });
               }
-              ratio = 0;
             }
 
             heightThreshold += 27 * tableData.length;
