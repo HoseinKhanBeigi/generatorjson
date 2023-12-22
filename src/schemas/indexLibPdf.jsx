@@ -2,7 +2,7 @@ import { PDFDocument, rgb, degrees } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 import fontLight from "../assets/IRANSans4/WebFonts/fonts/ttf/IRANSansWeb_Light.ttf";
 import fontBold from "../assets/IRANSans4/WebFonts/fonts/ttf/IRANSansWeb_Medium.ttf";
-import data1 from "../formDocOne.json";
+import data1 from "../formDocOne2.json";
 import "./schema.css";
 import Table from "./table";
 
@@ -46,6 +46,33 @@ function Sechma() {
     lines.push(currentLine.trim());
     return lines;
   }
+
+  function sliceArray(originalArray) {
+    return originalArray.reduce((result, item) => {
+      let slicedEntities = [];
+
+      item.pages[0].entities.forEach((entity) => {
+        if (entity.breakDownPage === true) {
+          // If "breakDownPage" is true, push the current slice and reset for the next chunk
+          if (slicedEntities.length > 0) {
+            result.push({ pages: [{ entities: slicedEntities }] });
+            slicedEntities = [];
+          }
+        } else {
+          // Add the current entity to the current slice
+          slicedEntities.push({ text: entity.text || "" });
+        }
+      });
+
+      // Push the remaining entities if any
+      if (slicedEntities.length > 0) {
+        result.push({ pages: [{ entities: slicedEntities }] });
+      }
+
+      return result;
+    }, []);
+  }
+
   async function createPdf() {
     const pdfDoc = await PDFDocument.create();
     const fontBytes = await fetch(fontLight).then((response) =>
@@ -60,6 +87,10 @@ function Sechma() {
     const regularFont = await pdfDoc.embedFont(fontBytes);
     const boldFont = await pdfDoc.embedFont(fontBoldBytes);
     let heightThreshold = 30;
+
+    const te = sliceArray(data1);
+
+    console.log(te);
 
     const transformedData = data1.flatMap((item) => {
       const { pages } = item;
@@ -182,8 +213,6 @@ function Sechma() {
                 });
 
                 ratio = lenText.length < 7 ? lengthTextLetter.length + 100 : 0;
-
-                console.log(cellX);
 
                 page.drawText(tableData[row][col].text, {
                   size: 12,
