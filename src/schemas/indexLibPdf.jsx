@@ -83,9 +83,13 @@ function Sechma() {
       response.arrayBuffer()
     );
 
+    const signInageByte = await fetch(signUrlImg).then((res) =>
+      res.arrayBuffer()
+    );
     pdfDoc.registerFontkit(fontkit);
     const regularFont = await pdfDoc.embedFont(fontBytes);
     const boldFont = await pdfDoc.embedFont(fontBoldBytes);
+    const signImage = await pdfDoc.embedPng(signInageByte);
     let heightThreshold = 30;
 
     const te = sliceArray(data1);
@@ -158,6 +162,32 @@ function Sechma() {
         const { width, height } = page.getSize();
         heightThreshold = 40;
 
+        page.drawText("امضاومهر کارگزاری", {
+          x: 60,
+          y: 150,
+          size: 9,
+          font: regularFont,
+        });
+        page.drawImage(signImage, {
+          x: 50,
+          y: 30,
+          width: 100,
+          height: 100,
+        });
+
+        page.drawText("امضاومهر مشتری", {
+          x: 460,
+          y: 150,
+          size: 9,
+          font: regularFont,
+        });
+        page.drawImage(signImage, {
+          x: 450, // X-coordinate of the top-left corner of the image
+          y: 30, // Y-coordinate of the top-left corner of the image
+          width: 100,
+          height: 100,
+        });
+
         // page.setFont(regularFont);
         pg.entities.map((item, idx) => {
           const tableData = item?.table;
@@ -189,17 +219,12 @@ function Sechma() {
           } else if (item?.table) {
             const cellWidth = 280;
             const cellHeight = 20;
-            let ratio = 0;
             const tableX = 50;
             for (let row = 0; row < tableData.length; row++) {
               for (let col = 0; col < tableData[row].length; col++) {
                 const tableY = height - heightThreshold - row;
                 const cellX = tableX + col * cellWidth;
                 const cellY = tableY - row * cellHeight;
-
-                const lengthTextLetter = tableData[row][col].text.split("");
-                const lenText = tableData[row][col].text.split(" ");
-
                 const silverColor = rgb(192 / 255, 192 / 255, 192 / 255);
 
                 page.drawRectangle({
@@ -212,16 +237,18 @@ function Sechma() {
                   borderWidth: 1,
                 });
 
-                ratio = lenText.length < 7 ? lengthTextLetter.length + 100 : 0;
-
-                page.drawText(tableData[row][col].text, {
-                  size: 12,
-                  x: cellX + 100,
-                  y: cellY + 6,
-                  font: regularFont,
-                });
+                page.drawText(
+                  reverseParentheses(
+                    reverseDoubleAngleQuotes(tableData[row][col].text)
+                  ),
+                  {
+                    size: 12,
+                    x: cellX,
+                    y: cellY + 6,
+                    font: regularFont,
+                  }
+                );
               }
-              ratio = 0;
             }
 
             heightThreshold += 27 * tableData.length;
@@ -282,7 +309,7 @@ function Sechma() {
                   <div className="sign">
                     <span>امضاومهر کارگزاری</span>
                     <span>امضاومهر مشتری</span>
-                    <img src="public/vite.svg" />
+                    <img src={signUrlImg} width={80} height={80} />
                   </div>
                 </div>
               );
